@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Xóc Đĩa - Tài Xỉu Style</title>
+    <style>
+        :root {
+            --bg: #1e1e2f;
+            --primary: #facc15;
+            --secondary: #3b82f6;
+            --accent: #ef4444;
+            --white: #f9fafb;
+            --green: #10b981;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--white);
+            text-align: center;
+            padding: 30px;
+            margin: 0;
+        }
+
+        h1 {
+            color: var(--primary);
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .board {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+        }
+
+        .plate {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #ccc;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .cover {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #555;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
+            transition: top 0.2s ease-in-out, left 0.2s ease-in-out;
+            cursor: grab;
+            user-select: none;
+        }
+
+        .cover.dragging {
+            cursor: grabbing;
+        }
+
+        .coin {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 5px #000;
+            border: 2px solid #333;
+        }
+
+        .white {
+            background: white;
+        }
+
+        .red {
+            background: red;
+        }
+
+        #countdown {
+            font-size: 20px;
+            margin-top: 20px;
+            color: var(--primary);
+        }
+
+        .mode-toggle {
+            margin-top: 15px;
+            background: #666;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .mode-toggle.active {
+            background: var(--green);
+        }
+
+        .bet-group,
+        #betAmounts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .bet-button {
+            background: var(--secondary);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .bet-button.active {
+            outline: 3px solid var(--primary);
+        }
+
+        .bet-amount-display {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--primary);
+        }
+
+        .bet-amount-btn {
+            background: var(--secondary);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .bet-amount-btn.active {
+            background: var(--primary);
+            color: black;
+        }
+
+        #history {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .history-item {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid #444;
+        }
+
+        .history-item.chan {
+            background: black;
+        }
+
+        .history-item.le {
+            background: white;
+        }
+
+        .bet-button.win-highlight {
+            background-color: var(--accent);
+            /* màu đỏ nhấn mạnh */
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 8px var(--accent);
+            font-weight: bold;
+        }
+
+        .bet-button.result-highlight {
+            outline: 3px solid var(--green);
+            background-color: rgba(16, 185, 129, 0.2);
+            /* xanh lá mờ */
+        }
+
+
+        .win-amount {
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--accent);
+            animation: rise 0.6s ease-out;
+        }
+
+        @keyframes rise {
+            0% {
+                opacity: 0;
+                transform: translate(-50%, 0);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -10px);
+            }
+        }
+
+        .bet-button {
+            background: linear-gradient(to bottom, #2e3a59, #1e2a47);
+            border: 2px solid #4f5d7a;
+            border-radius: 16px;
+            padding: 14px 20px;
+            color: #f1f5f9;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            position: relative;
+            min-width: 100px;
+            transition: all 0.2s ease;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .bet-amount-btn {
+            background: linear-gradient(to bottom, #2e3a59, #1e2a47);
+            border: 2px solid #4f5d7a;
+            border-radius: 16px;
+            padding: 14px 20px;
+            color: #f1f5f9;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            cursor: pointer;
+            position: relative;
+            min-width: 100px;
+            transition: all 0.2s ease;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .bet-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #3b82f6;
+        }
+
+        .bet-button.active {
+            border-color: var(--primary);
+            background: linear-gradient(to bottom, #facc15, #d4af37);
+            color: #1e1e2f;
+        }
+
+        .bet-button.result-highlight {
+            border-color: var(--green);
+            box-shadow: 0 0 12px var(--green);
+        }
+
+        .bet-button.win-highlight {
+            background: linear-gradient(to bottom, #dc2626, #b91c1c);
+            color: white;
+            box-shadow: 0 0 12px #ef4444;
+        }
+
+        .bet-amount-display {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎲 Xóc Đĩa</h1>
+    <div class="money">💰 Số dư: <span id="money"></span> đ</div>
+    <div class="board">
+        <div class="plate" id="plate"></div>
+        <div class="cover" id="cover"></div>
+    </div>
+
+    <div id="countdown">⏳ Thời gian còn lại: 10 giây</div>
+    <button id="modeBtn" class="mode-toggle" onclick="toggleAutoMode()">🖐️</button>
+
+    <div class="bet-group">
+        <button class="bet-button" data-type="chan" onclick="toggleBet(this)">CHẴN
+            <div class="bet-amount-display" id="amount-chan"></div>
+        </button>
+        <button class="bet-button" data-type="le" onclick="toggleBet(this)">LẺ
+            <div class="bet-amount-display" id="amount-le"></div>
+        </button>
+    </div>
+
+    <div class="bet-group">
+        <button class="bet-button" data-type="tu_trang" onclick="toggleBet(this)">⚪⚪⚪⚪
+            <div class="bet-amount-display" id="amount-tu_trang"></div>
+        </button>
+        <button class="bet-button" data-type="tu_do" onclick="toggleBet(this)">🔴🔴🔴🔴
+            <div class="bet-amount-display" id="amount-tu_do"></div>
+        </button>
+        <button class="bet-button" data-type="ba_trang" onclick="toggleBet(this)">⚪⚪⚪
+            <div class="bet-amount-display" id="amount-ba_trang"></div>
+        </button>
+        <button class="bet-button" data-type="ba_do" onclick="toggleBet(this)">🔴🔴🔴
+            <div class="bet-amount-display" id="amount-ba_do"></div>
+        </button>
+    </div>
+
+    <div class="bet-amounts">
+        <button class="bet-amount-btn" data-amount="1000" onclick="selectAmount(1000)">1.000</button>
+        <button class="bet-amount-btn" data-amount="5000" onclick="selectAmount(5000)">5.000</button>
+        <button class="bet-amount-btn" data-amount="10000" onclick="selectAmount(10000)">10.000</button>
+        <button class="bet-amount-btn" data-amount="50000" onclick="selectAmount(50000)">50.000</button>
+        <button class="bet-amount-btn" data-amount="100000" onclick="selectAmount(100000)">100.000</button>
+        <button class="bet-amount-btn" data-amount="500000" onclick="selectAmount(500000)">500.000</button>
+        <button class="bet-amount-btn" data-amount="1000000" onclick="selectAmount(1000000)">1.000.000</button>
+        <button class="bet-amount-btn" data-amount="5000000" onclick="selectAmount(5000000)">5.000.000</button>
+        <button class="bet-amount-btn" data-amount="50000000" onclick="selectAmount(50000000)">50.000.000</button>
+        <button class="bet-amount-btn" data-amount="all" onclick="selectAmount(playerMoney)">All In</button>
+    </div>
+
+    <div>
+        <h3 style="margin-top:30px;">Lịch sử kết quả</h3>
+        <div id="history"></div>
+    </div>
+
+    <script>
+        const cover = document.getElementById("cover");
+        const plate = document.getElementById("plate");
+        const history = [];
+
+        let countdown = 10;
+        let interval;
+        let autoOpen = false;
+        let readyToReveal = false;
+        let coins = [];
+
+        // Kéo cover - HỖ TRỢ CẢ CHUỘT VÀ CẢM ỨNG
+        let isDragging = false, startX = 0, startY = 0, currentLeft = 0, currentTop = 0;
+
+        function startDrag(x, y) {
+            if (!readyToReveal || autoOpen) return;
+            isDragging = true;
+            startX = x;
+            startY = y;
+            cover.classList.add("dragging");
+        }
+
+        function dragTo(x, y) {
+            if (!isDragging) return;
+            const deltaX = x - startX;
+            const deltaY = y - startY;
+
+            currentLeft = Math.max(-180, Math.min(180, deltaX));
+            currentTop = Math.max(-180, Math.min(180, deltaY));
+
+            cover.style.left = currentLeft + "px";
+            cover.style.top = currentTop + "px";
+
+            if ((Math.abs(currentLeft) > 150 || Math.abs(currentTop) > 150) && readyToReveal) {
+                finalizeReveal();
+            }
+        }
+
+        function endDrag() {
+            if (!isDragging) return;
+            isDragging = false;
+            cover.classList.remove("dragging");
+
+            if (Math.abs(currentLeft) < 150 && Math.abs(currentTop) < 150) {
+                cover.style.left = "0px";
+                cover.style.top = "0px";
+            }
+        }
+
+        // CHUỘT
+        cover.addEventListener("mousedown", e => startDrag(e.clientX, e.clientY));
+        document.addEventListener("mousemove", e => dragTo(e.clientX, e.clientY));
+        document.addEventListener("mouseup", endDrag);
+
+        // CẢM ỨNG
+        cover.addEventListener("touchstart", e => {
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                startDrag(touch.clientX, touch.clientY);
+            }
+        });
+        document.addEventListener("touchmove", e => {
+            if (e.touches.length === 1) {
+                const touch = e.touches[0];
+                dragTo(touch.clientX, touch.clientY);
+            }
+        });
+        document.addEventListener("touchend", endDrag);
+
+
+        function toggleAutoMode() {
+            autoOpen = !autoOpen;
+            document.getElementById("modeBtn").innerText = autoOpen ? "🖐️❌" : "🖐️";
+            document.getElementById("modeBtn").classList.toggle("active", autoOpen);
+        }
+
+        function startGame() {
+            countdown = 10;
+            document.getElementById("countdown").innerText = `⏳ Thời gian còn lại: ${countdown} giây`;
+            interval = setInterval(() => {
+                countdown--;
+                document.getElementById("countdown").innerText = `⏳ Thời gian còn lại: ${countdown} giây`;
+                if (countdown <= 0) {
+                    clearInterval(interval);
+                    prepareResult();
+                }
+            }, 1000);
+        }
+
+        function prepareResult() {
+            coins = [];
+            for (let i = 0; i < 4; i++) {
+                coins.push(Math.random() < 0.5 ? "white" : "red");
+            }
+            drawCoins(coins);
+            readyToReveal = true;
+            document.getElementById("countdown").innerText = autoOpen ? "🧠 Đang mở kết quả..." : "🕹 Kéo nắp để xem kết quả!";
+
+            if (autoOpen) setTimeout(() => finalizeReveal(), 1000);
+        }
+
+        function drawCoins(coins) {
+            plate.innerHTML = "";
+            const placed = [];
+
+            coins.forEach(color => {
+                const c = document.createElement("div");
+                c.className = "coin " + color;
+
+                let tries = 0, left, top;
+                do {
+                    left = Math.random() * 120 + 20;
+                    top = Math.random() * 120 + 20;
+                    tries++;
+                } while (placed.some(p => getDistance(left, top, p.left, p.top) < 50) && tries < 100);
+
+                placed.push({ left, top });
+
+                c.style.left = left + "px";
+                c.style.top = top + "px";
+                plate.appendChild(c);
+            });
+        }
+
+        function getDistance(x1, y1, x2, y2) {
+            return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+        }
+
+        // function finalizeReveal() {
+        //     readyToReveal = false;
+        //     cover.style.top = "-250px";
+        //     cover.style.left = "0px";
+
+        //     const reds = coins.filter(c => c === "red").length;
+        //     const result = reds % 2 === 0 ? "chan" : "le";
+        //     history.unshift(result);
+        //     if (history.length > 20) history.pop();
+        //     renderHistory();
+
+        //     setTimeout(() => {
+        //         resetRound();
+        //         startGame();
+        //     }, 5000);
+        // }
+
+        function renderHistory() {
+            const div = document.getElementById("history");
+            div.innerHTML = "";
+            history.forEach(r => {
+                const el = document.createElement("div");
+                el.className = `history-item ${r}`;
+                div.appendChild(el);
+            });
+        }
+
+        function resetRound() {
+            cover.style.top = "0px";
+            cover.style.left = "0px";
+            plate.innerHTML = "";
+            readyToReveal = false;
+        }
+
+        let playerMoney = 500000000;
+        let selectedBetAmount = 1000;
+        let betValues = {};
+
+        function updateMoneyDisplay() {
+            const moneyEl = document.getElementById("money");
+            console.log("moneyEl:", moneyEl);
+            if (moneyEl) {
+                moneyEl.innerText = playerMoney.toLocaleString();
+            }
+        }
+
+        function selectAmount(amount) {
+            selectedBetAmount = amount;
+
+            document.querySelectorAll(".bet-amount-btn").forEach(btn => {
+                const amt = btn.dataset.amount;
+                if ((amt === "all" && amount === playerMoney) || parseInt(amt) === amount) {
+                    btn.classList.add("active");
+                } else {
+                    btn.classList.remove("active");
+                }
+            });
+        }
+
+        function toggleBet(button) {
+            const type = button.dataset.type;
+            if (isNaN(selectedBetAmount) || selectedBetAmount <= 0) return;
+            if (playerMoney < selectedBetAmount) {
+                alert("Không đủ tiền để đặt cược!");
+                return;
+            }
+
+            if (!button.classList.contains("active")) {
+                button.classList.add("active");
+            }
+
+            betValues[type] = (betValues[type] || 0) + selectedBetAmount;
+            playerMoney -= selectedBetAmount;
+
+            document.getElementById("amount-" + type).innerText = betValues[type].toLocaleString() + " đ";
+
+            updateMoneyDisplay();
+        }
+
+
+        function finalizeReveal() {
+            readyToReveal = false;
+            cover.style.top = "-250px";
+            cover.style.left = "0px";
+
+            const reds = coins.filter(c => c === "red").length;
+            const whites = 4 - reds;
+            const result = reds % 2 === 0 ? "chan" : "le";
+
+            const betRates = {
+                chan: 1.95,
+                le: 1.95,
+                tu_trang: 16,
+                tu_do: 16,
+                ba_trang: 4,
+                ba_do: 4,
+            };
+
+            let totalWin = 0;
+
+            // 👉 Clear hiệu ứng cũ
+            document.querySelectorAll(".bet-button").forEach(btn => {
+                btn.classList.remove("win-highlight", "result-highlight");
+                const winAmt = btn.querySelector(".win-amount");
+                if (winAmt) winAmt.remove();
+            });
+
+            Object.keys(betValues).forEach(type => {
+                const bet = betValues[type] || 0;
+                let won = false;
+
+                switch (type) {
+                    case 'chan': won = reds % 2 === 0; break;
+                    case 'le': won = reds % 2 === 1; break;
+                    case 'tu_trang': won = reds === 0; break;
+                    case 'tu_do': won = reds === 4; break;
+                    case 'ba_trang': won = whites === 3; break;
+                    case 'ba_do': won = reds === 3; break;
+                }
+
+                if (won) {
+                    const reward = bet * betRates[type];
+                    totalWin += reward;
+
+                    const btn = document.querySelector(`.bet-button[data-type="${type}"]`);
+                    if (btn) {
+                        btn.classList.add("win-highlight");
+                        const winDiv = document.createElement("div");
+                        winDiv.className = "win-amount";
+                        winDiv.innerText = `+${reward.toLocaleString()} đ`;
+                        btn.appendChild(winDiv);
+                    }
+                }
+            });
+
+            // 👉 Luôn highlight ô đúng kết quả (dù có cược hay không)
+            const resultTypeList = [];
+            if (reds % 2 === 0) resultTypeList.push("chan");
+            else resultTypeList.push("le");
+            if (reds === 0) resultTypeList.push("tu_trang");
+            if (reds === 4) resultTypeList.push("tu_do");
+            if (reds === 3) resultTypeList.push("ba_do");
+            if (whites === 3) resultTypeList.push("ba_trang");
+
+            resultTypeList.forEach(type => {
+                const btn = document.querySelector(`.bet-button[data-type="${type}"]`);
+                if (btn) btn.classList.add("result-highlight");
+            });
+
+            playerMoney += totalWin;
+            updateMoneyDisplay();
+
+            history.unshift(result);
+            if (history.length > 20) history.pop();
+            renderHistory();
+
+            setTimeout(() => {
+                resetBets();
+                resetRound();
+                startGame();
+            }, 5000);
+        }
+
+        function resetBets() {
+            betValues = {};
+            document.querySelectorAll(".bet-button").forEach(btn => {
+                btn.classList.remove("active", "win-highlight", "result-highlight");
+                const amt = btn.querySelector(".bet-amount-display");
+                if (amt) amt.innerText = '';
+                const winAmt = btn.querySelector(".win-amount");
+                if (winAmt) winAmt.remove();
+            });
+        }
+
+        window.onload = () => {
+            updateMoneyDisplay();
+            selectAmount(1000);
+            startGame();
+        };
+    </script>
+</body>
+
+</html>

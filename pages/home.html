@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Home - Sunwin Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom, #1a1a2e, #0f3460);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    header {
+      background: linear-gradient(to right, #ffcc00, #ff9900);
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 28px;
+      font-weight: bold;
+      color: #000;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    }
+
+    .container {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    .game-card {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      border: 2px solid transparent;
+    }
+
+    .game-card:hover {
+      transform: scale(1.05);
+      border-color: #facc15;
+      box-shadow: 0 0 15px #facc15;
+    }
+
+    .game-card img {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      margin-bottom: 15px;
+    }
+
+    .game-card h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #facc15;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    SUNWIN CLUB - Chọn Trò Chơi
+  </header>
+
+  <!-- <div class="container">
+    <a class="game-card" href="taixiu.html">
+      <img src="../assets/images/taixiu-icon.png" alt="Tài Xỉu">
+      <h3>TÀI XỊU</h3>
+    </a>
+
+    <a class="game-card" href="xicbo.html">
+      <img src="../assets/images/xicbo-icon.png" alt="Xí Ngầu">
+      <h3>XÍ NGẦU</h3>
+    </a>
+  </div> -->
+
+  <div class="container">
+    <a class="game-card" href="taixiu.html">
+      <img src="../assets/images/taixiu-icon.png" alt="Tài Xỉu" onerror="this.onerror=null;this.src='../assets/images/default-taixiu.png';">
+      <h3>TÀI XỈU</h3>
+    </a>
+
+    <a class="game-card" href="xicbo.html">
+      <img src="../assets/images/xicbo-icon.png" alt="Xí Ngầu" onerror="this.onerror=null;this.src='../assets/images/default-xicbo.png';">
+      <h3>XÍ NGẦU</h3>
+    </a>
+  </div>
+</body>
+
+</html>
