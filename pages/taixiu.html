@@ -1571,6 +1571,7 @@
       user-select: none;
       border: 3px solid #1a252f;
       box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.3);
+      touch-action: none;
     }
 
     .cover::before {
@@ -1940,12 +1941,14 @@
 
     const cover = document.getElementById('cover');
 
+    // Mouse events
     cover.addEventListener("mousedown", (e) => {
       if (!readyToReveal) return;
       isDragging = true;
       startX = e.clientX;
       startY = e.clientY;
       cover.classList.add("dragging");
+      e.preventDefault();
     });
 
     document.addEventListener("mousemove", (e) => {
@@ -1969,6 +1972,50 @@
     });
 
     document.addEventListener("mouseup", () => {
+      if (!isDragging) return;
+      isDragging = false;
+      cover.classList.remove("dragging");
+
+      if (Math.abs(currentLeft) < 150 && Math.abs(currentTop) < 150) {
+        cover.style.left = "0px";
+        cover.style.top = "0px";
+      }
+    });
+
+    // Touch events for mobile
+    cover.addEventListener("touchstart", (e) => {
+      if (!readyToReveal) return;
+      isDragging = true;
+      const touch = e.touches[0];
+      startX = touch.clientX;
+      startY = touch.clientY;
+      cover.classList.add("dragging");
+      e.preventDefault();
+    });
+
+    document.addEventListener("touchmove", (e) => {
+      if (!isDragging) return;
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - startX;
+      const deltaY = touch.clientY - startY;
+
+      let newLeft = Math.max(-180, Math.min(180, deltaX));
+      let newTop = Math.max(-180, Math.min(180, deltaY));
+
+      currentLeft = newLeft;
+      currentTop = newTop;
+
+      cover.style.left = newLeft + "px";
+      cover.style.top = newTop + "px";
+
+      if ((Math.abs(newTop) > 150 || Math.abs(newLeft) > 150) && readyToReveal) {
+        finalizeReveal();
+      }
+      e.preventDefault();
+    });
+
+    document.addEventListener("touchend", () => {
       if (!isDragging) return;
       isDragging = false;
       cover.classList.remove("dragging");
